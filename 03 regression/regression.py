@@ -25,13 +25,18 @@ def gradient_step(theta, X, Y, alpha):
 
 def gradient_descent(theta, x, y, alpha, steps):
     for i in range(steps):
+        """
         if i%100 == 0:
             print ("Current cost: ", cost(theta, x, y))
+        """
         theta = gradient_step(theta, x, y, alpha)
     return theta
 
 def y_plotLine(x, theta):
     return theta[0] + x*theta[1]
+
+def y_plotLine2(x, theta):
+    return theta[0] + x*theta[1] + x**2*theta[2]
 
 
 #load and format data
@@ -49,7 +54,6 @@ X = np.append(ones1, X, axis=1)    #m x (n+1) (80x2)  matrix
 
 
 ### regression with one parameter y = ax + b
-
 initial_theta = np.zeros((2, 1))    #nx1 vector
 #prepare train and test sets
 X_train, X_test, Y_train, Y_test = modsel.train_test_split\
@@ -59,12 +63,36 @@ alpha = 1e-05
 steps = 2000
 theta = gradient_descent(initial_theta, X_train, Y_train, alpha, steps)
 
-print("Training cost: ", cost(theta, X_train, Y_train))
-print("Test cost: ", cost(theta, X_test, Y_test))
+linearTestCost = cost(theta, X_test, Y_test)
+print("LINEAR: Training cost: \t", cost(theta, X_train, Y_train))
+print("LINEAR: Test cost: \t\t", linearTestCost)
+
+
+
+### regression with one parameter y = ax^2 + bx + c
+X_vals = X[:,1].reshape(m, 1)
+X2 = np.append(X, X_vals**2, axis=1)    #(n+1)x m  matrix
+initial_theta2 = np.zeros((3, 1))
+
+X_train2, X_test2, Y_train2, Y_test2 = modsel.train_test_split\
+    (X2, Y, test_size=0.33, random_state=42)
+
+alpha2 = 1e-9
+steps2 = 2000
+theta2 = gradient_descent(initial_theta2, X_train2, Y_train2, alpha2, steps2)
+
+qadraticTestCost = cost(theta2, X_test2, Y_test2)
+print("QUADRATIC: Training cost: \t", cost(theta2, X_train2, Y_train2))
+print("QUADRATIC: Test cost: \t\t", qadraticTestCost)
 
 #plot data
-plt.plot(X_test[:,1], Y_test, 'r.')
-plt.plot(X_test[:,1], y_plotLine(X_test[:,1], theta))
+x_min = np.amin(X_test[:,1])
+x_max = np.amax(X_test[:,1])
+step = 0.1;
+x_p = np.arange(x_min, x_max, step)
+
+plt.plot(X_test[:,1], Y_test, 'b.')
+linearPlot = plt.plot(x_p, y_plotLine(x_p, theta), 'r', label="Linear cost = " + str(linearTestCost))
+quadraticPlot = plt.plot(x_p, y_plotLine2(x_p, theta2), 'g', label="Quadratic cost = " + str(qadraticTestCost))
+plt.legend(loc = 2)
 plt.show()
-
-
