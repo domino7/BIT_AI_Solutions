@@ -32,11 +32,6 @@ def gradient_descent(theta, x, y, alpha, steps):
         theta = gradient_step(theta, x, y, alpha)
     return theta
 
-def y_plotLine(x, theta):
-    return theta[0] + x*theta[1]
-
-def y_plotLine2(x, theta):
-    return theta[0] + x*theta[1] + x**2*theta[2]
 
 
 #load and format data
@@ -86,13 +81,13 @@ print("QUADRATIC: Training cost: \t", cost(theta2, X_train2, Y_train2))
 print("QUADRATIC: Test cost: \t\t", qadraticTestCost)
 
 #plot data
-x_min = np.amin(X_test[:,1])
-x_max = np.amax(X_test[:,1])
-step = 0.1;
-x_p = np.arange(x_min, x_max, step)
+x_p = np.linspace(min(X_test[:,1]), max(X_test[:,1]))
+y_lin = [theta[0] + x*theta[1] for x in x_p]
+y_quad = [theta2[0] + x*theta2[1] + x**2*theta2[2] for x in x_p]
 
 plt.plot(X_test[:,1], Y_test, 'b.')
-linearPlot = plt.plot(x_p, y_plotLine(x_p, theta), 'r', label="Linear cost = " + str(linearTestCost))
-quadraticPlot = plt.plot(x_p, y_plotLine2(x_p, theta2), 'g', label="Quadratic cost = " + str(qadraticTestCost))
+linearPlot = plt.plot(x_p, y_lin, 'r', label="Linear cost = " + str(linearTestCost))
+quadraticPlot = plt.plot(x_p, y_quad, 'g', label="Quadratic cost = " + str(qadraticTestCost))
 plt.legend(loc = 2)
 plt.show()
+
